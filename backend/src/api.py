@@ -96,24 +96,25 @@ def drinks_detail(payload):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks', methods=['POST'])
-def add_drink():
+@requires_auth('post:drinks')
+def add_drink(payload):
     body = request.get_json()
+    if body is None:
+        abort(400)
     title = body.get('title', None)
     recipe = body.get('recipe', None)
-    if recipe is None:
+    if (recipe is None) or (title is None):
         abort(400)
 
     # define Drink instance
     try:
         drink = Drink()
         drink.title = title
-        drink.recipe = str(recipe)
+        drink.recipe = str([recipe]).replace("\'", "\"")
         drink.insert()
-        # a = str(recipe)
-        # print(type(a))
         return jsonify({
             "success": True,
-            "drink": drink.long()
+            "drinks": [drink.long()]
         })
     except:
         abort(422)
@@ -179,6 +180,15 @@ def not_found(error):
         "error": 404,
         "message": "resource not found"
     }), 404
+
+
+@app.errorhandler(400)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bad request"
+    }), 400
 
 
 '''
