@@ -37,7 +37,7 @@ drink_1.insert()
 '''
 @app.route('/drinks')
 def get_drinks():
-    # DEFINE DRINKS LIST
+    # define drinks list
     drinks = []
     try:
         for drink in Drink.query.all():
@@ -64,6 +64,26 @@ def get_drinks():
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
+def drinks_detail(payload):
+    # define drinks list
+    drinks = []
+    try:
+        for drink in Drink.query.all():
+            # append long drink to the drink list
+            drinks.append(drink.long())
+        # check if the drinks list is empty
+        if len(drinks) == 0:
+            raise Exception('list of drinks is empty')
+        return jsonify({
+            "success": True,
+            "drinks": drinks
+        })
+    except:
+        if len(drinks) == 0:
+            abort(404)
+        abort(422)
 
 
 '''
