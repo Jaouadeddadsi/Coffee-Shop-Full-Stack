@@ -95,6 +95,28 @@ def drinks_detail(payload):
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+def add_drink():
+    body = request.get_json()
+    title = body.get('title', None)
+    recipe = body.get('recipe', None)
+    if recipe is None:
+        abort(400)
+
+    # define Drink instance
+    try:
+        drink = Drink()
+        drink.title = title
+        drink.recipe = str(recipe)
+        drink.insert()
+        # a = str(recipe)
+        # print(type(a))
+        return jsonify({
+            "success": True,
+            "drink": drink.long()
+        })
+    except:
+        abort(422)
 
 
 '''
@@ -150,9 +172,24 @@ def unprocessable(error):
 @TODO implement error handler for 404
     error handler should conform to general task above
 '''
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+    }), 404
 
 
 '''
 @TODO implement error handler for AuthError
     error handler should conform to general task above
 '''
+@app.errorhandler(AuthError)
+def handle_AuthError(error):
+    payload = dict(error.error)
+    return jsonify({
+        "success": False,
+        "error": payload["code"],
+        "message": payload["description"]
+    }), error.status_code
