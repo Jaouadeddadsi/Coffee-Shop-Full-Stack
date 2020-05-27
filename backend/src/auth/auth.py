@@ -180,7 +180,10 @@ def requires_auth(permission=''):
             try:
                 payload = verify_decode_jwt(token)
             except:
-                abort(401)
+                raise AuthError({
+                    'code': 'invalid_claims',
+                    'description': 'token not verified.'
+                }, 401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
 
