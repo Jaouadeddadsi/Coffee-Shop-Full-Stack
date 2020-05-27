@@ -43,11 +43,16 @@ def get_drinks():
         for drink in Drink.query.all():
             # append short drink to the drink list
             drinks.append(drink.short())
+        # check if the drinks list is empty
+        if len(drinks) == 0:
+            raise Exception('list of drinks is empty')
         return jsonify({
             "success": True,
             "drinks": drinks
         })
     except:
+        if len(drinks) == 0:
+            abort(404)
         abort(422)
 
 
