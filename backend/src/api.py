@@ -16,7 +16,15 @@ CORS(app)
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
+
+# some test data
+drink_1 = Drink()
+drink_1.title = "drink 1"
+drink_1.recipe = '[{"color": "red", "name":"recipe 1", "parts":1}]'
+drink_1.insert()
+########
+
 
 # ROUTES
 '''
