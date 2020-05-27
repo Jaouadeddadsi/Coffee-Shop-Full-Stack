@@ -1,5 +1,5 @@
 import json
-from flask import request, _request_ctx_stack
+from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -35,23 +35,31 @@ class AuthError(Exception):
 
 
 def get_token_auth_header():
-    # CHECK IF HEADER CONTAIN AUTHORIZATION
+    """Obtains the Access Token from the Authorization Header
+    """
     if "Authorization" not in request.headers:
         raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Authorization not defined'
+            'code': 'authorization_header_missing',
+            'description': 'Authorization header is expected'
         }, 401)
     auth_header = request.headers["Authorization"]
     header_part = auth_header.split(' ')
-    if len(header_part) != 2:
+    if len(header_part) == 1:
         raise AuthError({
             'code': 'invalid_header',
-            'description': 'Unable to pase authentication token'
+            'description': 'Token not found'
         }, 401)
+
+    elif len(header_part) > 2:
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization header must be bearer token.'
+        }, 401)
+
     elif header_part[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
-            'description': 'bearer not found'
+            'description': 'Authorization header must start with "bearer".'
         }, 401)
     return header_part[1]
 
@@ -181,8 +189,8 @@ def requires_auth(permission=''):
                 payload = verify_decode_jwt(token)
             except:
                 raise AuthError({
-                    'code': 'invalid_claims',
-                    'description': 'token not verified.'
+                    'code': 'token_inverified',
+                    'description': 'token can not be verified.'
                 }, 401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
