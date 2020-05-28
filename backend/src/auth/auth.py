@@ -25,11 +25,11 @@ class AuthError(Exception):
 # Auth Header
 
 '''
-@TODO implement get_token_auth_header() method
+get_token_auth_header()
     it should attempt to get the header from the request
-        it should raise an AuthError if no header is present
+    it should raise an AuthError if no header is present
     it should attempt to split bearer and the token
-        it should raise an AuthError if the header is malformed
+    it should raise an AuthError if the header is malformed
     return the token part of the header
 '''
 
@@ -65,7 +65,7 @@ def get_token_auth_header():
 
 
 '''
-@TODO implement check_permissions(permission, payload) method
+check_permissions(permission, payload) method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
         payload: decoded jwt payload
@@ -92,7 +92,7 @@ def check_permissions(permission, payload):
 
 
 '''
-@TODO implement verify_decode_jwt(token) method
+verify_decode_jwt(token) method
     @INPUTS
         token: a json web token (string)
 
@@ -169,7 +169,7 @@ def verify_decode_jwt(token):
 
 
 '''
-@TODO implement @requires_auth(permission) decorator method
+@requires_auth(permission) decorator method
     @INPUTS
         permission: string permission (i.e. 'post:drink')
 
