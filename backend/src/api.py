@@ -18,15 +18,6 @@ CORS(app)
 '''
 db_drop_and_create_all()
 
-# some test data
-drink_1 = Drink()
-drink_1.title = "drink 1"
-drink_1.recipe = json.dumps(
-    [{"color": "red", "name": "recipe 1", "parts": 1}])
-drink_1.insert()
-########
-
-
 # ROUTES
 '''
 @TODO implement endpoint
