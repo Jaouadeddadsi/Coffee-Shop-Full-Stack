@@ -14,10 +14,18 @@ CORS(app)
 
 db_drop_and_create_all()
 
+# some test data
+drink_1 = Drink()
+drink_1.title = "drink 1"
+drink_1.recipe = json.dumps(
+    [{"color": "red", "name": "recipe 1", "parts": 1}])
+drink_1.insert()
+########
+
 # ROUTES
 '''
 GET /drinks
-    public endpoint
+    it is public endpoint
     it contain the drink.short() data representation
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
     or appropriate status code indicating reason for failure
@@ -26,46 +34,31 @@ GET /drinks
 def get_drinks():
     try:
         drinks = list(map(Drink.short, Drink.query.all()))
-        # check if the drinks list is empty
-        if len(drinks) == 0:
-            raise Exception('list of drinks is empty')
         return jsonify({
             "success": True,
             "drinks": drinks
         })
     except:
-        if len(drinks) == 0:
-            abort(404)
         abort(422)
 
 
 '''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
+GET /drinks-detail
+    it require the 'get:drinks-detail' permission
+    it should contain the drink.long() data representation
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
+    or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
 def drinks_detail(payload):
-    # define drinks list
-    drinks = []
     try:
-        for drink in Drink.query.all():
-            # append long drink to the drink list
-            drinks.append(drink.long())
-        # check if the drinks list is empty
-        if len(drinks) == 0:
-            raise Exception('list of drinks is empty')
+        drinks = list(map(Drink.long, Drink.query.all()))
         return jsonify({
             "success": True,
             "drinks": drinks
         })
     except:
-        if len(drinks) == 0:
-            abort(404)
         abort(422)
 
 
