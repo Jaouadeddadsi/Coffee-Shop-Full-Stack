@@ -21,7 +21,8 @@ db_drop_and_create_all()
 # some test data
 drink_1 = Drink()
 drink_1.title = "drink 1"
-drink_1.recipe = '[{"color": "red", "name":"recipe 1", "parts":1}]'
+drink_1.recipe = json.dumps(
+    [{"color": "red", "name": "recipe 1", "parts": 1}])
 drink_1.insert()
 ########
 
@@ -110,11 +111,14 @@ def add_drink(payload):
     try:
         drink = Drink()
         drink.title = title
-        drink.recipe = str([recipe]).replace("\'", "\"")
+        if isinstance(recipe, dict):
+            recipe = [recipe]
+        drink.recipe = json.dumps(recipe)
         drink.insert()
+        new_drink = Drink.query.get(drink.id)
         return jsonify({
             "success": True,
-            "drinks": [drink.long()]
+            "drinks": [new_drink.long()]
         })
     except:
         abort(422)
