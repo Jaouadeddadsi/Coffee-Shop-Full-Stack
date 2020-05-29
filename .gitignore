@@ -13,3 +13,4 @@ test.db
 ehthumbs.db
 Thumbs.db
 */database.db
+backend/src/database/database.db
